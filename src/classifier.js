@@ -1,10 +1,6 @@
 const { classifyWithLLM } = require("./llmClassifier");
 const { classifyWithRules } = require("./ruleClassifier");
 
-/**
- * Main entry point. Tries LLM first; if ANTHROPIC_API_KEY is absent or the
- * call fails it falls back to the deterministic rule-based classifier.
- */
 async function classifyTicket({ ticket_id, channel, locale, message }) {
   const useAI = !!process.env.ANTHROPIC_API_KEY;
 
@@ -20,10 +16,7 @@ async function classifyTicket({ ticket_id, channel, locale, message }) {
     result = classifyWithRules(message);
   }
 
-  // Enforce safety rule: agent_summary must never contain sensitive prompts
   result.agent_summary = sanitizeSummary(result.agent_summary);
-
-  // Derive human_review_required — per spec: phishing or critical severity only
   result.human_review_required =
     result.severity === "critical" || result.case_type === "phishing_or_social_engineering";
 
@@ -38,9 +31,6 @@ async function classifyTicket({ ticket_id, channel, locale, message }) {
   };
 }
 
-/**
- * Strip any accidental instruction to share PIN/OTP/password/card number.
- */
 function sanitizeSummary(summary) {
   const banned = /\b(pin|otp|password|full card number|card number)\b/gi;
   return summary.replace(banned, "[REDACTED]");

@@ -4,7 +4,6 @@ const { classifyTicket } = require("./classifier");
 const app = express();
 app.use(express.json());
 
-// ─── GET /health ────────────────────────────────────────────────────────────
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
@@ -13,7 +12,6 @@ app.get("/health", (req, res) => {
   });
 });
 
-// ─── POST /sort-ticket ───────────────────────────────────────────────────────
 app.post("/sort-ticket", async (req, res) => {
   const { ticket_id, channel, locale, message } = req.body;
 

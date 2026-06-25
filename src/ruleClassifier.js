@@ -1,9 +1,3 @@
-/**
- * Deterministic rule-based classifier.
- * Used when ANTHROPIC_API_KEY is not set or when the LLM call fails.
- * Covers all 5 sample test cases and common Bangla/English mixed patterns.
- */
-
 const PATTERNS = {
   phishing_or_social_engineering: [
     /\botp\b/i,
@@ -67,8 +61,6 @@ const PATTERNS = {
 
 function classifyWithRules(message) {
   const text = message || "";
-
-  // Check in priority order (phishing first — highest stakes)
   for (const [caseType, patterns] of Object.entries(PATTERNS)) {
     const matchCount = patterns.filter((p) => p.test(text)).length;
     if (matchCount > 0) {
@@ -77,7 +69,6 @@ function classifyWithRules(message) {
     }
   }
 
-  // Default
   return buildResult("other", 0.6);
 }
 

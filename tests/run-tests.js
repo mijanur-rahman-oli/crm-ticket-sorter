@@ -1,11 +1,3 @@
-/**
- * Self-contained test runner — no external test framework required.
- * Run: node tests/run-tests.js
- *
- * Tests the rule-based classifier directly (no server needed).
- * For live endpoint tests, set BASE_URL env var and use the HTTP tests below.
- */
-
 require("dotenv").config();
 const { classifyTicket } = require("../src/classifier");
 
@@ -92,7 +84,6 @@ async function runTests() {
       }
     }
 
-    // Check safety rule — summary must not contain sensitive terms
     const summaryLower = (result.agent_summary || "").toLowerCase();
     for (const word of SENSITIVE_WORDS) {
       if (summaryLower.includes(word)) {
@@ -100,7 +91,6 @@ async function runTests() {
       }
     }
 
-    // Check confidence is a valid float 0-1
     if (typeof result.confidence !== "number" || result.confidence < 0 || result.confidence > 1) {
       errors.push(`confidence out of range: ${result.confidence}`);
     }
@@ -114,7 +104,6 @@ async function runTests() {
       failed++;
     }
 
-    // Print result detail
     console.log(
       `       → case_type=${result.case_type} severity=${result.severity} dept=${result.department} confidence=${result.confidence} human_review=${result.human_review_required}`
     );
